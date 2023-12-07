@@ -2,8 +2,8 @@
 {
     internal class Program
     {
-        const string fileName = @"D:\temp\advent\AdventOfCoding\Day5\TestData1.txt";
-        const string fileName2 = @"D:\temp\advent\AdventOfCoding\Day5\InputData.txt";
+        const string fileName = @"D:\temp\advent\AOC2023\Day5\TestData1.txt";
+        const string fileName2 = @"D:\temp\advent\AOC2023\Day5\InputData.txt";
 
         static void Main(string[] args)
         {

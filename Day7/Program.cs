@@ -1,13 +1,13 @@
-﻿namespace Day6
+﻿namespace Day7
 {
     internal class Program
     {
-        const string fileName = @"D:\temp\advent\AOC2023\Day6\TestData1.txt";
-        const string fileName2 = @"D:\temp\advent\AOC2023\Day6\InputData.txt";
+        const string fileName = @"D:\temp\advent\AOC2023\Day7\TestData1.txt";
+        const string fileName2 = @"D:\temp\advent\AOC2023\Day7\InputData.txt";
 
         static void Main(string[] args)
         {
-            Day6 day1 = new Day6();
+            Day7 day1 = new Day7();
             day1.Execute1(fileName);
             day1.Execute1(fileName2);
 
