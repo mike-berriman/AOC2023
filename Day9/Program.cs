@@ -1,13 +1,13 @@
-﻿namespace Boilerplate
+﻿namespace Day9
 {
     internal class Program
     {
-        const string fileName = @"D:\temp\advent\AOC2023\Boilerplate\TestData1.txt";
-        const string fileName2 = @"D:\temp\advent\AOC2023\Boilerplate\InputData.txt";
+        const string fileName = @"D:\temp\advent\AOC2023\Day9\TestData1.txt";
+        const string fileName2 = @"D:\temp\advent\AOC2023\Day9\InputData.txt";
 
         static void Main(string[] args)
         {
-            Boilerplate day1 = new Boilerplate();
+            Day9 day1 = new Day9();
             day1.Execute1(fileName);
             day1.Execute1(fileName2);
 

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using AOCShared;
 
-namespace Boilerplate
+namespace Day9
 {
-    internal class Boilerplate
+    internal class Day9
     {
         internal void Execute1(string fileName)
         {
