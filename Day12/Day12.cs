@@ -10,10 +10,11 @@ namespace Day12
 {
     public class Line
     {
+        public string OriginalSequence { get; set; } = string.Empty;
         public string Sequence { get; set; } = string.Empty;
-        public List<long> Backup { get; set; } = new List<long>();
 
-        public string MultipleSequence { get; set; } = string.Empty;
+        public List<long> Backup { get; set; } = new List<long>();
+        public List<long> OriginalBackup { get; set; } = new List<long>();
         public List<long> MultipleBackup { get; set; } = new List<long>();
 
         bool multiple = false;
@@ -26,23 +27,21 @@ namespace Day12
         public Line(string line, bool multiply)
         {
             string[] splits = line.Split(' ');
-            Sequence = splits[0];
+            OriginalSequence = splits[0];
 
             string backup = splits[1];
 
-            MultipleSequence = Sequence;
             string multiBackup = backup;
             for (int i = 0; i < 4; i++)
             {
-                MultipleSequence += '?';
-                MultipleSequence += splits[0];
-
                 multiBackup += ',';
                 multiBackup += backup;
             }
 
+            Sequence = OriginalSequence;
             MultipleBackup = StringLibraries.GetListOfInts(multiBackup, ',');
-            Backup = StringLibraries.GetListOfInts(backup, ',');
+            OriginalBackup = StringLibraries.GetListOfInts(backup, ',');
+            Backup = OriginalBackup;
             multiple = multiply;
         }
 
@@ -95,17 +94,80 @@ namespace Day12
 
             //total = (long)Math.Pow(firstlasttotal, 2) + (long)Math.Pow(middleTotal, 3);
 
-            Sequence = MultipleSequence;
+
+            List<string> firstmatches = new List<string>();
+            MethodsCalculation(firstmatches);
+
+            Sequence = "?" + OriginalSequence;
+
+            List<string> secondmatches = new List<string>();
+            MethodsCalculation(secondmatches);
+
+            List<string> finalresults = new List<string>();
+
             Backup = MultipleBackup;
+            for (int i = 0; i < firstmatches.Count; i++)
+            {
+                for (int j = 0; j < secondmatches.Count; j++)
+                {
+                    for (int k = 0; k < secondmatches.Count; k++)
+                    {
+                        for (int l = 0; l < secondmatches.Count; l++)
+                        {
+                            for (int m = 0; m < secondmatches.Count; m++)
+                            {
+                                string tester = firstmatches[i] + secondmatches[j] + secondmatches[k] + secondmatches[l] + secondmatches[m];
+                                if (Match(tester))
+                                {
+                                    finalresults.Add(tester);
+                                }
+                            }
 
-            total = MethodsCalculation();
+                        }
 
+                    }
+
+                }
+
+            }
+
+
+            Sequence = OriginalSequence + "?";
+            Backup = OriginalBackup;
+
+            secondmatches = new List<string>();
+            MethodsCalculation(secondmatches);
+
+            Backup = MultipleBackup;
+            for (int i = 0; i < secondmatches.Count; i++)
+            {
+                for (int j = 0; j < secondmatches.Count; j++)
+                {
+                    for (int k = 0; k < secondmatches.Count; k++)
+                    {
+                        for (int l = 0; l < secondmatches.Count; l++)
+                        {
+                            for (int m = 0; m < firstmatches.Count; m++)
+                            {
+                                string tester = secondmatches[i] + secondmatches[j] + secondmatches[k] + secondmatches[l] + firstmatches[m];
+                                if (Match(tester))
+                                {
+                                    finalresults.Add(tester);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            total = finalresults.Distinct().Count();
+            //total = finalresults.Count;
 
             return total;
         }
 
 
-        public long MethodsCalculation()
+        public long MethodsCalculation(List<string> matches)
         {
             long count = 0;
             List<int> questions = new List<int>();
@@ -152,6 +214,12 @@ namespace Day12
                 if (Match(new string(test)))
                 {
                     count++;
+
+                    if (matches != null)
+                    {
+                        matches.Add(new string(test));
+                    }
+
                 }
 
             }
@@ -202,20 +270,25 @@ namespace Day12
                 }
             }
 
-            object locker = new object();
-            Parallel.ForEach(lines, line =>
             {
-                Line ln = new Line(line, true);
-                //long val = ln.MethodsCalculation();
-                long val = ln.LongMethodCalculation();
-
-                lock(locker)
+                object locker = new object();
+                Parallel.ForEach(lines, linematch =>
+                //foreach (string linematch in lines)
                 {
-                    total += val;
-                }
+                    Line ln = new Line(linematch, true);
+                    //long val = ln.MethodsCalculation();
+                    long val = ln.LongMethodCalculation();
 
-                Console.Write('.');
-            });
+                    lock (locker)
+                    {
+                        total += val;
+                    }
+
+                    Console.Write('.');
+                }
+            );
+            }
+
 
 
             Console.WriteLine("2) Result is: " + total);
