@@ -8,15 +8,33 @@ using AOCShared;
 
 namespace Day12
 {
+    public class RecursionDetails
+    {
+        public int currIndex;
+        public int backupNumberIndex;
+        public int numberChunkCount;
+        public string recursiveSequenceTest = string.Empty;
+
+        public override int GetHashCode()
+        {
+            return (currIndex * 1000000) + (backupNumberIndex * 1000) + numberChunkCount;
+        }
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as RecursionDetails);
+        }
+
+        public bool Equals(RecursionDetails obj)
+        {
+            return obj != null && obj.GetHashCode() == this.GetHashCode();
+        }
+    }
+
     public class Line
     {
-        public string OriginalSequence { get; set; } = string.Empty;
         public string Sequence { get; set; } = string.Empty;
 
         public List<long> Backup { get; set; } = new List<long>();
-        public List<long> OriginalBackup { get; set; } = new List<long>();
-        public List<long> MultipleBackup { get; set; } = new List<long>();
-
         bool multiple = false;
 
         public Line()
@@ -27,21 +45,25 @@ namespace Day12
         public Line(string line, bool multiply)
         {
             string[] splits = line.Split(' ');
-            OriginalSequence = splits[0];
+            Sequence = splits[0];
 
             string backup = splits[1];
 
-            string multiBackup = backup;
-            for (int i = 0; i < 4; i++)
+            if (multiply)
             {
-                multiBackup += ',';
-                multiBackup += backup;
+                string multiBackup = backup;
+                for (int i = 0; i < 4; i++)
+                {
+                    multiBackup += ',';
+                    multiBackup += backup;
+
+                    Sequence += "?";
+                    Sequence += splits[0];
+                }
+                backup = multiBackup;
             }
 
-            Sequence = OriginalSequence;
-            MultipleBackup = StringLibraries.GetListOfInts(multiBackup, ',');
-            OriginalBackup = StringLibraries.GetListOfInts(backup, ',');
-            Backup = OriginalBackup;
+            Backup = StringLibraries.GetListOfInts(backup, ',');
             multiple = multiply;
         }
 
@@ -63,168 +85,115 @@ namespace Day12
             return true;
         }
 
-        public bool Match(string tester)
-        {
-            string[] splits = tester.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-            List<int> values = new List<int>();
-            foreach (string val in splits)
-            {
-                values.Add(val.Length);
-            }
+        char[] questionArray = new char[2] { '.', '#' };
+        Dictionary<RecursionDetails, long> cache = new Dictionary<RecursionDetails, long>();
 
-            return IsMatch(values);
-
-        }
-
-        public long LongMethodCalculation()
-        {
-            long total = 0;
-
-            //string matchFound = string.Empty;
-            //long firstlasttotal = MethodsCalculation(false, ref matchFound);
-
-            //Line l = new Line()
-            //{
-            //    Sequence = "?" + this.Sequence,
-            //    Backup = this.Backup
-            //};
-
-            //long middleTotal = l.MethodsCalculation(false, ref matchFound);
-
-            //total = (long)Math.Pow(firstlasttotal, 2) + (long)Math.Pow(middleTotal, 3);
-
-
-            List<string> firstmatches = new List<string>();
-            MethodsCalculation(firstmatches);
-
-            Sequence = "?" + OriginalSequence;
-
-            List<string> secondmatches = new List<string>();
-            MethodsCalculation(secondmatches);
-
-            List<string> finalresults = new List<string>();
-
-            Backup = MultipleBackup;
-            for (int i = 0; i < firstmatches.Count; i++)
-            {
-                for (int j = 0; j < secondmatches.Count; j++)
-                {
-                    for (int k = 0; k < secondmatches.Count; k++)
-                    {
-                        for (int l = 0; l < secondmatches.Count; l++)
-                        {
-                            for (int m = 0; m < secondmatches.Count; m++)
-                            {
-                                string tester = firstmatches[i] + secondmatches[j] + secondmatches[k] + secondmatches[l] + secondmatches[m];
-                                if (Match(tester))
-                                {
-                                    finalresults.Add(tester);
-                                }
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-
-            Sequence = OriginalSequence + "?";
-            Backup = OriginalBackup;
-
-            secondmatches = new List<string>();
-            MethodsCalculation(secondmatches);
-
-            Backup = MultipleBackup;
-            for (int i = 0; i < secondmatches.Count; i++)
-            {
-                for (int j = 0; j < secondmatches.Count; j++)
-                {
-                    for (int k = 0; k < secondmatches.Count; k++)
-                    {
-                        for (int l = 0; l < secondmatches.Count; l++)
-                        {
-                            for (int m = 0; m < firstmatches.Count; m++)
-                            {
-                                string tester = secondmatches[i] + secondmatches[j] + secondmatches[k] + secondmatches[l] + firstmatches[m];
-                                if (Match(tester))
-                                {
-                                    finalresults.Add(tester);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            total = finalresults.Distinct().Count();
-            //total = finalresults.Count;
-
-            return total;
-        }
-
-
-        public long MethodsCalculation(List<string> matches)
+        public long Recurse(RecursionDetails details)
         {
             long count = 0;
-            List<int> questions = new List<int>();
 
-            int startPos = 0;
-            while (true)
+            if (cache.ContainsKey(details))
             {
-                int index = Sequence.IndexOf('?', startPos);
-                if (index < 0)
-                {
-                    break;
-                }
-                else
-                {
-                    questions.Add(index);
-                    startPos = index+1;
-                }
+                //return cache[details];
             }
 
-            long val = (long)Math.Pow(2, questions.Count);
-
-            List<long> masks = new List<long>();
-            for (int j = 0; j < questions.Count; j++)
+            if (details.currIndex == Sequence.Length)
             {
-                masks.Add((long)Math.Pow(2, j));
-            }
-
-            for (int i = 0; i < val; i++)
-            {
-                char[] test = Sequence.ToArray();
-
-                for (int j = 0; j < questions.Count; j++)
+                if (details.numberChunkCount == 0)
                 {
-                    if ((i & masks[j]) > 0)
+                    // Ended on a '.'
+                    if (details.backupNumberIndex == Backup.Count)
                     {
-                        test[questions[j]] = '.';
+                        return 1;
+
                     }
                     else
                     {
-                        test[questions[j]] = '#';
+                        return 0;
+
                     }
                 }
-
-                if (Match(new string(test)))
+                else if ((details.backupNumberIndex == Backup.Count-1) && (details.numberChunkCount == Backup[details.backupNumberIndex]))
                 {
-                    count++;
-
-                    if (matches != null)
-                    {
-                        matches.Add(new string(test));
-                    }
-
+                    // Ended on a '#'
+                    return 1;
                 }
-
+                else
+                {
+                    return 0;
+                }
             }
 
+            char[] useChar = new char[] { Sequence[details.currIndex] };
+            if (Sequence[details.currIndex] == '?')
+            {
+                useChar = questionArray;
+            }
+
+            foreach (char c in useChar)
+            {
+                if (c == '.')
+                {
+                    if (details.numberChunkCount > 0)
+                    {
+                        // Just coming out of a chunk of #
+                        if ((details.backupNumberIndex >= Backup.Count) || (details.numberChunkCount != Backup[details.backupNumberIndex]))
+                        {
+                            // Not a match - bail.
+                            continue;
+                        }
+
+                        if (details.backupNumberIndex < Backup.Count)
+                        {
+                            RecursionDetails newDetails = new RecursionDetails()
+                            {
+                                currIndex = details.currIndex + 1,
+                                backupNumberIndex = details.backupNumberIndex + 1,
+                                numberChunkCount = 0,
+                                recursiveSequenceTest = details.recursiveSequenceTest + c
+                            };
+                            count += Recurse(newDetails);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        RecursionDetails newDetails = new RecursionDetails()
+                        {
+                            currIndex = details.currIndex + 1,
+                            backupNumberIndex = details.backupNumberIndex,
+                            numberChunkCount = 0,
+                            recursiveSequenceTest = details.recursiveSequenceTest + c
+                        };
+                        count += Recurse(newDetails);
+                    }
+                }
+                else if (c == '#')
+                {
+                    RecursionDetails newDetails = new RecursionDetails()
+                    {
+                        currIndex = details.currIndex + 1,
+                        backupNumberIndex = details.backupNumberIndex + 1,
+                        numberChunkCount = details.numberChunkCount + 1,
+                        recursiveSequenceTest = details.recursiveSequenceTest + c
+                    };
+
+                    count += Recurse(newDetails);
+                }
+            }
+
+            cache[details] = count;
             return count;
+        }
+
+        public long CalculateRecursive()
+        {
+            
+            return Recurse(new RecursionDetails());
         }
 
     }
@@ -242,17 +211,15 @@ namespace Day12
             {
                 if (!string.IsNullOrEmpty(line))
                 {
-                    //Line ln = new Line(line, false);
-                    //total += ln.MethodsCalculation();
+                    Line ln = new Line(line, false);
+
+                    long val = ln.CalculateRecursive();
+                    total += val;
                 }
             }
 
             Console.WriteLine("1) Result is: " + total);
         }
-
-
-
-
 
 
         internal void Execute2(string fileName)
@@ -270,26 +237,21 @@ namespace Day12
                 }
             }
 
+            object lockObj = new object();
+            int count = 0;
+
+            Parallel.ForEach(lines, thisLine =>
             {
-                object locker = new object();
-                Parallel.ForEach(lines, linematch =>
-                //foreach (string linematch in lines)
+                Line ln = new Line(thisLine, true);
+
+                long val = ln.CalculateRecursive();
+
+                lock(lockObj)
                 {
-                    Line ln = new Line(linematch, true);
-                    //long val = ln.MethodsCalculation();
-                    long val = ln.LongMethodCalculation();
-
-                    lock (locker)
-                    {
-                        total += val;
-                    }
-
-                    Console.Write('.');
+                    total += val;
+                    Console.WriteLine(count++ + " - " + total);
                 }
-            );
-            }
-
-
+            });
 
             Console.WriteLine("2) Result is: " + total);
         }
