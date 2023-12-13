@@ -8,6 +8,25 @@ namespace AOCShared
 {
     public class StringLibraries
     {
+        public static List<string> GetAllLines(string filename)
+        {
+            List<string> lines = new List<string>();
+            using (StreamReader rdr = new StreamReader(filename))
+            {
+                string line = string.Empty;
+
+                while ((line = rdr.ReadLine()) != null)
+                {
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        lines.Add(line);
+                    }
+                }
+            }
+            return lines;
+        }
+
+
         public static List<string> GetListOfStrings(string data, char delim)
         {
             return data.Split(delim, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();

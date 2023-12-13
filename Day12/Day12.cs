@@ -240,20 +240,26 @@ namespace Day12
             object lockObj = new object();
             int count = 0;
 
-            Parallel.ForEach(lines, thisLine =>
+            DateTime startTime = DateTime.Now;
+
+            foreach (string thisLine in lines)
+            //Parallel.ForEach(lines, thisLine =>
             {
                 Line ln = new Line(thisLine, true);
 
                 long val = ln.CalculateRecursive();
 
-                lock(lockObj)
+                //lock(lockObj)
                 {
                     total += val;
                     //Console.WriteLine(count++ + " - " + total);
                 }
-            });
+            }
+            //);
 
+            Console.WriteLine("Time taken: " + (DateTime.Now - startTime).TotalMilliseconds);
             Console.WriteLine("2) Result is: " + total);
+
         }
 
     }
