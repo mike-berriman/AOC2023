@@ -95,7 +95,7 @@ namespace Day12
 
             if (cache.ContainsKey(details))
             {
-                //return cache[details];
+                return cache[details];
             }
 
             if (details.currIndex == Sequence.Length)
@@ -177,7 +177,7 @@ namespace Day12
                     RecursionDetails newDetails = new RecursionDetails()
                     {
                         currIndex = details.currIndex + 1,
-                        backupNumberIndex = details.backupNumberIndex + 1,
+                        backupNumberIndex = details.backupNumberIndex,
                         numberChunkCount = details.numberChunkCount + 1,
                         recursiveSequenceTest = details.recursiveSequenceTest + c
                     };
@@ -249,7 +249,7 @@ namespace Day12
                 lock(lockObj)
                 {
                     total += val;
-                    Console.WriteLine(count++ + " - " + total);
+                    //Console.WriteLine(count++ + " - " + total);
                 }
             });
 
