@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AOCShared;
 
-namespace Boilerplate
+namespace Day15
 {
 
     internal class AdventClass
@@ -23,7 +23,7 @@ namespace Boilerplate
     }
 
 
-    internal class Boilerplate
+    internal class Day15
     {
         List<AdventClass> inputObjects = new List<AdventClass>();
 
