@@ -14,13 +14,13 @@
             day1.Execute(fileName, false, 1);
 
             day1 = new Day17_Djikstra();
-            //day1.Execute(fileName2, false, 2);
+            day1.Execute(fileName2, false, 2);
 
             day1 = new Day17_Djikstra();
-            //day1.Execute(fileName, true, 3);
+            day1.Execute(fileName, true, 3);
 
             day1 = new Day17_Djikstra();
-            //day1.Execute(fileName2, true, 4);
+            day1.Execute(fileName2, true, 4);
 
             Console.ReadKey();
         }
