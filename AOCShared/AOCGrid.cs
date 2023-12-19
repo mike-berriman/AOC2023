@@ -15,10 +15,83 @@ namespace AOCShared
         Unknown
     };
 
+    // Define an extension method in a non-nested static class.
+    public static class DirectionExtensions
+    {
+        public static Direction TurnLeft(Direction dir)
+        {
+            switch (dir)
+            {
+                case Direction.East:
+                    return Direction.North;
+                case Direction.West:
+                    return Direction.South;
+                case Direction.North:
+                    return Direction.West;
+                case Direction.South:
+                    return Direction.East;
+            }
+
+            return dir;
+        }
+
+        public static Direction TurnRight(Direction dir)
+        {
+            switch (dir)
+            {
+                case Direction.East:
+                    return Direction.South;
+                case Direction.West:
+                    return Direction.North;
+                case Direction.North:
+                    return Direction.East;
+                case Direction.South:
+                    return Direction.West;
+            }
+
+            return dir;
+        }
+
+        public static bool IsOppositeDirection(Direction dir1, Direction dir2)
+        {
+            bool reverse = false;
+            switch (dir1)
+            {
+                case Direction.East:
+                    if (dir2 == Direction.West)
+                    {
+                        reverse = true;
+                    }
+                    break;
+                case Direction.West:
+                    if (dir2 == Direction.East)
+                    {
+                        reverse = true;
+                    }
+                    break;
+                case Direction.North:
+                    if (dir2 == Direction.South)
+                    {
+                        reverse = true;
+                    }
+                    break;
+                case Direction.South:
+                    if (dir2 == Direction.North)
+                    {
+                        reverse = true;
+                    }
+                    break;
+            }
+
+            return reverse;
+        }
+
+    }
+
     public class Coordinate : IEquatable<Coordinate>
     {
-        public int X { get; set; } = 0;
-        public int Y { get; set; } = 0;
+        public long X { get; set; } = 0;
+        public long Y { get; set; } = 0;
 
         public Coordinate()
         {
@@ -68,6 +141,29 @@ namespace AOCShared
 
             return Direction.West;
         }
+
+        public bool Move(Direction CurrentDirection, long distance)
+        {
+            bool finished = false;
+            switch (CurrentDirection)
+            {
+                case Direction.East:
+                    X += distance;
+                    break;
+                case Direction.North:
+                    Y -= distance;
+                    break;
+                case Direction.West:
+                    X -= distance;
+                    break;
+                case Direction.South:
+                    Y += distance;
+                    break;
+            }
+
+            return finished;
+        }
+
     }
 
     public class AOCGrid
@@ -131,87 +227,16 @@ namespace AOCShared
             GridHeight = Grid.Count;
         }
 
-        public Direction TurnLeft(Direction dir)
-        {
-            switch (dir)
-            {
-                case Direction.East:
-                    return Direction.North;
-                case Direction.West:
-                    return Direction.South;
-                case Direction.North:
-                    return Direction.West;
-                case Direction.South:
-                    return Direction.East;
-            }
-
-            return dir;
-        }
-
-        public Direction TurnRight(Direction dir)
-        {
-            switch (dir)
-            {
-                case Direction.East:
-                    return Direction.South;
-                case Direction.West:
-                    return Direction.North;
-                case Direction.North:
-                    return Direction.East;
-                case Direction.South:
-                    return Direction.West;
-            }
-
-            return dir;
-        }
-
-        public bool MoveNext(Coordinate CurrentCoordinate, Direction CurrentDirection)
+        public bool MoveNext(Coordinate CurrentCoordinate, Direction CurrentDirection, long distance = 1)
         {
             bool finished = false;
-            switch (CurrentDirection)
+
+            CurrentCoordinate.Move(CurrentDirection, distance);
+
+            if (((CurrentCoordinate.X < 0) || (CurrentCoordinate.X >= GridWidth)) ||
+                ((CurrentCoordinate.Y < 0) || (CurrentCoordinate.Y >= GridHeight)))
             {
-                case Direction.East:
-                    if (CurrentCoordinate.X + 1 >= GridWidth)
-                    {
-                        finished = true;
-                    }
-                    else
-                    {
-                        CurrentCoordinate.X++;
-                    }
-                    break;
-                case Direction.North:
-                    if (CurrentCoordinate.Y - 1 < 0)
-                    {
-                        finished = true;
-                    }
-                    else
-                    {
-                        CurrentCoordinate.Y--;
-                    }
-                    break;
-                    break;
-                case Direction.West:
-                    if (CurrentCoordinate.X - 1 < 0)
-                    {
-                        finished = true;
-                    }
-                    else
-                    {
-                        CurrentCoordinate.X--;
-                    }
-                    break;
-                    break;
-                case Direction.South:
-                    if (CurrentCoordinate.Y + 1 >= GridHeight)
-                    {
-                        finished = true;
-                    }
-                    else
-                    {
-                        CurrentCoordinate.Y++;
-                    }
-                    break;
+                finished = true;
             }
 
             return finished;
@@ -219,12 +244,12 @@ namespace AOCShared
 
         public void Set(Coordinate coord, char value)
         {
-            Grid[coord.Y][coord.X] = value;
+            Grid[(int)coord.Y][coord.X] = value;
         }
 
         public char Get(Coordinate coord)
         {
-            return Grid[coord.Y][coord.X];
+            return Grid[(int)coord.Y][coord.X];
         }
 
         public string GetRow(int row)

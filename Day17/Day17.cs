@@ -21,7 +21,7 @@ namespace Day17
 
         public override int GetHashCode()
         {
-            return (CurrentPos.X * 1000000) + (CurrentPos.Y * 1000) + Convert.ToInt32(CurrentDirection);
+            return (int)((CurrentPos.X * 1000000) + (CurrentPos.Y * 1000) + Convert.ToInt32(CurrentDirection));
         }
         public override bool Equals(object obj)
         {
@@ -160,7 +160,7 @@ namespace Day17
                 }
 
                 Coordinate left = new Coordinate(settings.CurrentPos);
-                Direction newDirection = Grid.TurnLeft(settings.CurrentDirection);
+                Direction newDirection = DirectionExtensions.TurnLeft(settings.CurrentDirection);
                 if (!Grid.MoveNext(left, newDirection))
                 {
                     // Not already visited
@@ -174,7 +174,7 @@ namespace Day17
                 }
 
                 Coordinate right = new Coordinate(settings.CurrentPos);
-                newDirection = Grid.TurnRight(settings.CurrentDirection);
+                newDirection = DirectionExtensions.TurnRight(settings.CurrentDirection);
                 if (!Grid.MoveNext(right, newDirection))
                 {
                     // Not already visited

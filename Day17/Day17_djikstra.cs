@@ -31,7 +31,7 @@ namespace Day17
         public override int GetHashCode()
         {
             //return (Coord.X * 1000000) + (Coord.Y * 1000);
-            return (Coord.X * 1000000) + (Coord.Y * 1000) + (Convert.ToInt32(Direction) * 100) + StepsInDirection;
+            return (int)((Coord.X * 1000000) + (Coord.Y * 1000) + (Convert.ToInt32(Direction) * 100) + StepsInDirection);
         }
         public override bool Equals(object obj)
         {
@@ -59,40 +59,6 @@ namespace Day17
             Weights.ConvertToIntegers();
 
             m_part2 = part2;
-        }
-
-        public bool IsOppositeDirection(Direction dir1, Direction dir2)
-        {
-            bool reverse = false;
-            switch (dir1)
-            {
-                case Direction.East:
-                    if (dir2 == Direction.West)
-                    {
-                        reverse = true;
-                    }
-                    break;
-                case Direction.West:
-                    if (dir2 == Direction.East)
-                    {
-                        reverse = true;
-                    }
-                    break;
-                case Direction.North:
-                    if (dir2 == Direction.South)
-                    {
-                        reverse = true;
-                    }
-                    break;
-                case Direction.South:
-                    if (dir2 == Direction.North)
-                    {
-                        reverse = true;
-                    }
-                    break;
-            }
-
-            return reverse;
         }
 
         public long Calculate1()
@@ -137,7 +103,7 @@ namespace Day17
                     DjikstraNode newNode = new DjikstraNode(thisNode);
                     newNode.Direction = (Direction)i;
 
-                    if (IsOppositeDirection(thisNode.Direction, newNode.Direction))
+                    if (DirectionExtensions.IsOppositeDirection(thisNode.Direction, newNode.Direction))
                     {
                         continue;
                     }

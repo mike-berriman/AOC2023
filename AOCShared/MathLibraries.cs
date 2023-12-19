@@ -8,7 +8,6 @@ namespace AOCShared
 {
     public class MathLibraries
     {
-
         public static long LowestCommonMultiple(List<long> lengths)
         {
             if (lengths.Count == 0)
@@ -42,5 +41,48 @@ namespace AOCShared
             return a * b / GreatestCommonDivisor(a, b);
         }
 
+        public static long PolylineSquarePerimeter(List<Coordinate> coords)
+        {
+            double length = 0;
+            for (int i = 1; i < coords.Count; i++)
+            {
+                length += Math.Abs(coords[i].X - coords[i - 1].X);
+                length += Math.Abs(coords[i].Y - coords[i - 1].Y);
+            }
+
+            return (long)length;
+        }
+
+        public static long PolylineArea(List<Coordinate> coords, bool includePerimeter)
+        {
+            long num4 = 0;
+            long num5 = 0;
+            foreach (Coordinate item in coords)
+            {
+                num4 += item.X;
+                num5 += item.Y;
+            }
+
+            num4 /= (long)coords.Count;
+            num5 /= (long)coords.Count;
+            long num6 = 0;
+            long num7 = 0;
+            for (int j = 0; j < coords.Count - 1; j++)
+            {
+                num6 += (coords[j].X - num4) * (coords[j + 1].Y - num5);
+                num7 += (coords[j].Y - num5) * (coords[j + 1].X - num4);
+            }
+
+            num6 += (coords[coords.Count - 1].X - num4) * (coords[0].Y - num5);
+            num7 += (coords[coords.Count - 1].Y - num5) * (coords[0].X - num4);
+            long total = (long)((num7 - num6) / 2.0);
+
+            if (includePerimeter)
+            {
+                total += (PolylineSquarePerimeter(coords)/2) + 1;
+            }
+
+            return total;
+        }
     }
 }
