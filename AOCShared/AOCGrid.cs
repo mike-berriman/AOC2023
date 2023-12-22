@@ -98,6 +98,12 @@ namespace AOCShared
 
         }
 
+        public Coordinate(long x, long y)
+        {
+            X = x;
+            Y = y;
+        }
+
         public Coordinate(Coordinate rhs)
         {
             X = rhs.X;
@@ -142,9 +148,30 @@ namespace AOCShared
             return Direction.West;
         }
 
-        public bool Move(Direction CurrentDirection, long distance)
+        public Coordinate MoveCopy(Direction CurrentDirection, long distance)
         {
-            bool finished = false;
+            Coordinate c = new Coordinate(this);
+            switch (CurrentDirection)
+            {
+                case Direction.East:
+                    c.X += distance;
+                    break;
+                case Direction.North:
+                    c.Y -= distance;
+                    break;
+                case Direction.West:
+                    c.X -= distance;
+                    break;
+                case Direction.South:
+                    c.Y += distance;
+                    break;
+            }
+
+            return c;
+        }
+
+        public Coordinate Move(Direction CurrentDirection, long distance)
+        {
             switch (CurrentDirection)
             {
                 case Direction.East:
@@ -161,7 +188,7 @@ namespace AOCShared
                     break;
             }
 
-            return finished;
+            return this;
         }
 
     }
@@ -203,6 +230,24 @@ namespace AOCShared
                 }
             }
 
+        }
+
+        public void MultiplyGrid(int number)
+        {
+            List<char[]> newGrid = new List<char[]>();
+
+            for (int i = 0; i < number; i++)
+            {
+                foreach (char[] line in Grid)
+                {
+                    char[] newLine = Enumerable.Repeat(line, number).SelectMany(arr => arr).ToArray();
+                    newGrid.Add(newLine);
+                }
+            }
+
+            Grid = newGrid;
+            GridWidth = Grid[0].Length;
+            GridHeight = Grid.Count;
         }
 
         private void Init(List<string> allData)
