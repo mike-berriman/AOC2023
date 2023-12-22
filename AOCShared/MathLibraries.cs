@@ -6,6 +6,34 @@ using System.Threading.Tasks;
 
 namespace AOCShared
 {
+    public class Coordinate3
+    {
+        public long X;
+        public long Y;
+        public long Z;
+
+        public Coordinate3()
+        {
+
+        }
+
+        public Coordinate3(Coordinate3 rhs)
+        {
+            X = rhs.X;
+            Y = rhs.Y;
+            Z = rhs.Z;
+        }
+
+        public Coordinate3(string input)
+        {
+            List<long> coords = StringLibraries.GetListOfInts(input, ',');
+            X = coords[0];
+            Y = coords[1];
+            Z = coords[2];
+        }
+    }
+
+
     public class MathLibraries
     {
         public static long LowestCommonMultiple(List<long> lengths)

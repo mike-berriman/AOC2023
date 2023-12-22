@@ -8,13 +8,13 @@
         static void Main(string[] args)
         {
             Day22 day1 = new Day22();
-            day1.Execute(fileName, false, 1);
+            //day1.Execute(fileName, false, 1);
 
             day1 = new Day22();
             day1.Execute(fileName2, false, 2);
 
             day1 = new Day22();
-            day1.Execute(fileName, true, 3);
+            //day1.Execute(fileName, true, 3);
 
             day1 = new Day22();
             day1.Execute(fileName2, true, 4);
