@@ -110,15 +110,15 @@ namespace AOCShared
             Y = rhs.Y;
         }
 
-        public bool Equals(Coordinate? other)
-        {
-            if ((X == other.X) && (Y == other.Y))
-            {
-                return true;
-            }
+        //public bool Equals(Coordinate? other)
+        //{
+        //    if ((X == other.X) && (Y == other.Y))
+        //    {
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         public Direction DirectionTo(Coordinate rhs)
         {
@@ -189,6 +189,20 @@ namespace AOCShared
             }
 
             return this;
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)((X * 100000) + (Y));
+        }
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Coordinate);
+        }
+
+        public bool Equals(Coordinate obj)
+        {
+            return obj != null && obj.GetHashCode() == this.GetHashCode();
         }
 
     }

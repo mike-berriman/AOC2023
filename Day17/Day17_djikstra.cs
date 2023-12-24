@@ -12,7 +12,7 @@ namespace Day17
     {
         public Coordinate Coord { get; set; } = new Coordinate();
         public long Distance { get; set; } = long.MaxValue;
-        public Direction Direction { get; set; }
+        public Direction Direction { get; set; } = Direction.Unknown;
         public int StepsInDirection { get; set; }
 
         public DjikstraNode()
