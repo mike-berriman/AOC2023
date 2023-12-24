@@ -33,6 +33,80 @@ namespace AOCShared
         }
     }
 
+    public class DoubleCoordinate3
+    {
+        public double X;
+        public double Y;
+        public double Z;
+
+        public DoubleCoordinate3()
+        {
+
+        }
+
+        public DoubleCoordinate3(DoubleCoordinate3 rhs)
+        {
+            X = rhs.X;
+            Y = rhs.Y;
+            Z = rhs.Z;
+        }
+
+        public DoubleCoordinate3(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public DoubleCoordinate3(string input)
+        {
+            List<double> coords = StringLibraries.GetListOfDoubles(input, ',');
+            X = coords[0];
+            Y = coords[1];
+            Z = coords[2];
+        }
+
+        public double LengthSquared
+        {
+            get { return X * X + Y * Y + Z * Z; }
+        }
+
+        public double Length
+        {
+            get { return Math.Sqrt(LengthSquared); }
+        }
+
+        public double Normalize()
+        {
+            double length = Length;
+            if (length > 0.000000001)
+            {
+                double invLength = 1.0 / length;
+                X *= invLength;
+                Y *= invLength;
+                Z *= invLength;
+            }
+            else
+            {
+                length = 0;
+                X = Y = Z = 0;
+            }
+            return length;
+        }
+
+        public void Subtract(DoubleCoordinate3 O)
+        {
+            X -= O.X; 
+            Y -= O.Y; 
+            Z -= O.Z;
+        }
+
+        public double Dot(DoubleCoordinate3 V2)
+        {
+            return X * V2.X + Y * V2.Y + Z * V2.Z;
+        }
+
+    }
 
     public class MathLibraries
     {
