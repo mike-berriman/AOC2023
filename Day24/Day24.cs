@@ -170,7 +170,7 @@ namespace Day24
             var vz = ctx.MkIntConst("vz");
 
             StreamWriter writer = new StreamWriter("d:\\temp\\simul_line.txt");
-            for (int i = 0; i < inputObjects.Count; i++)
+            for (int i = 0; i < 3/*inputObjects.Count*/; i++)
             {
                 var t = ctx.MkIntConst($"t{i}"); // time for the stone to reach the hail
                 var hail = inputObjects[i];
