@@ -311,6 +311,11 @@ namespace AOCShared
             return Grid[(int)coord.Y][coord.X];
         }
 
+        public char Get(int x, int y)
+        {
+            return Grid[x][y];
+        }
+
         public string GetRow(int row)
         {
             return new string(Grid[row]);
