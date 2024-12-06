@@ -286,6 +286,19 @@ namespace AOCShared
             GridHeight = Grid.Count;
         }
 
+        public bool isOutside(Coordinate CurrentCoordinate)
+        {
+            bool finished = false;
+
+            if (((CurrentCoordinate.X < 0) || (CurrentCoordinate.X >= GridWidth)) ||
+                ((CurrentCoordinate.Y < 0) || (CurrentCoordinate.Y >= GridHeight)))
+            {
+                finished = true;
+            }
+
+            return finished;
+        }
+
         public bool MoveNext(Coordinate CurrentCoordinate, Direction CurrentDirection, long distance = 1)
         {
             bool finished = false;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -50,6 +51,24 @@ namespace AOCShared
             }
 
             return dir;
+        }
+
+        public static char ToChar(Direction dir)
+        {
+            switch (dir)
+            {
+                case Direction.East:
+                    return '>';
+                case Direction.West:
+                    return '<';
+                case Direction.North:
+                    return '^';
+                case Direction.South:
+                    return 'v';
+            }
+
+            return ' ';
+
         }
 
         public static bool IsOppositeDirection(Direction dir1, Direction dir2)
@@ -109,16 +128,6 @@ namespace AOCShared
             X = rhs.X;
             Y = rhs.Y;
         }
-
-        //public bool Equals(Coordinate? other)
-        //{
-        //    if ((X == other.X) && (Y == other.Y))
-        //    {
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
 
         public Direction DirectionTo(Coordinate rhs)
         {
@@ -193,19 +202,70 @@ namespace AOCShared
 
         public override int GetHashCode()
         {
-            return (int)((X * 100000) + (Y));
+            return (int)((X * 1000000) + (Y * 10));
         }
         public override bool Equals(object obj)
         {
             return Equals(obj as Coordinate);
         }
 
-        public bool Equals(Coordinate obj)
+        public bool Equals(Coordinate other)
         {
-            return obj != null && obj.GetHashCode() == this.GetHashCode();
+            if (GetHashCode() == other.GetHashCode())
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    public class TraversalPosition : IEquatable<TraversalPosition>
+    {
+        public Coordinate Coord { get; set; } = null;
+        public Direction Dir { get; set; } = Direction.Unknown;
+
+        public TraversalPosition()
+        {
+
         }
 
+        public TraversalPosition(Coordinate coord, Direction dir)
+        {
+            Coord = coord;
+            Dir = dir;
+        }
+
+        public TraversalPosition(long x, long y, Direction dir)
+        {
+            Coord = new Coordinate(x, y);
+            Dir = dir;
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)(Coord.GetHashCode() + (int)Dir);
+        }
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Coordinate);
+        }
+
+        public bool Equals(TraversalPosition? other)
+        {
+            if (other != null)
+            {
+                if (GetHashCode() == other.GetHashCode())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
+
+
 
     public class AOCGrid
     {
@@ -284,6 +344,56 @@ namespace AOCShared
 
             GridWidth = Grid[0].Length;
             GridHeight = Grid.Count;
+        }
+
+        public (Direction, Coordinate) FindStart()
+        {
+            for (int i = 0; i < Grid.Count; i++)
+            {
+                char[] line = Grid[i];
+                for (int j = 0; j < line.Length; j++)
+                {
+                    Coordinate coord = new Coordinate(j, i);
+                    Direction dir = Direction.East;
+                    if (line[j] == '^')
+                    {
+                        dir = Direction.North;
+                        return (dir, coord);
+                    }
+                    if (line[j] == 'v')
+                    {
+                        dir = Direction.South;
+                        return (dir, coord);
+                    }
+                    if (line[j] == '>')
+                    {
+                        dir = Direction.East;
+                        return (dir, coord);
+                    }
+                    if (line[j] == '<')
+                    {
+                        dir = Direction.West;
+                        return (dir, coord);
+                    }
+
+                }
+            }
+
+            return (Direction.East, null);
+
+        }
+
+        public bool IsOutside(Coordinate CurrentCoordinate)
+        {
+            bool finished = false;
+
+            if (((CurrentCoordinate.X < 0) || (CurrentCoordinate.X >= GridWidth)) ||
+                ((CurrentCoordinate.Y < 0) || (CurrentCoordinate.Y >= GridHeight)))
+            {
+                finished = true;
+            }
+
+            return finished;
         }
 
         public bool MoveNext(Coordinate CurrentCoordinate, Direction CurrentDirection, long distance = 1)
