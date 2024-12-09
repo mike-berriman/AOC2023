@@ -230,6 +230,12 @@ namespace AOCShared
 
         }
 
+        public TraversalPosition(TraversalPosition pos)
+        {
+            Coord = new Coordinate(pos.Coord);
+            Dir = pos.Dir;
+        }
+
         public TraversalPosition(Coordinate coord, Direction dir)
         {
             Coord = coord;
@@ -240,6 +246,11 @@ namespace AOCShared
         {
             Coord = new Coordinate(x, y);
             Dir = dir;
+        }
+
+        public void MoveNext(int distance = 1)
+        {
+            Coord = Coord.Move(Dir, distance);
         }
 
         public override int GetHashCode()
@@ -289,9 +300,20 @@ namespace AOCShared
             Init(allData);
         }
 
-        public AOCGrid(AOCGrid allData)
+        public AOCGrid(AOCGrid allData, bool clear = false)
         {
-            Init(allData.Grid);
+            Init(allData.Grid, clear);
+        }
+
+        public void Clear(char clearVal = '.')
+        {
+            for (int i = 0; i < GridWidth; i++)
+            {
+                for (int j = 0; j < GridHeight; j++)
+                {
+                    Set(new Coordinate(i, j), clearVal);
+                }
+            }
         }
 
         public void ConvertToIntegers()
@@ -324,7 +346,7 @@ namespace AOCShared
             GridHeight = Grid.Count;
         }
 
-        private void Init(List<string> allData)
+        private void Init(List<string> allData, bool clear = false)
         {
             foreach (string lines in allData)
             {
@@ -333,9 +355,14 @@ namespace AOCShared
 
             GridWidth = Grid[0].Length;
             GridHeight = Grid.Count;
+
+            if (clear)
+            {
+                Clear();
+            }
         }
 
-        private void Init(List<char[]> allData)
+        private void Init(List<char[]> allData, bool clear = false)
         {
             foreach (char[] lines in allData)
             {
@@ -344,9 +371,14 @@ namespace AOCShared
 
             GridWidth = Grid[0].Length;
             GridHeight = Grid.Count;
+
+            if (clear)
+            {
+                Clear();
+            }
         }
 
-        public (Direction, Coordinate) FindStart()
+        public TraversalPosition? FindStart()
         {
             for (int i = 0; i < Grid.Count; i++)
             {
@@ -358,28 +390,42 @@ namespace AOCShared
                     if (line[j] == '^')
                     {
                         dir = Direction.North;
-                        return (dir, coord);
+                        return new TraversalPosition(coord, dir);
                     }
                     if (line[j] == 'v')
                     {
                         dir = Direction.South;
-                        return (dir, coord);
+                        return new TraversalPosition(coord, dir);
                     }
                     if (line[j] == '>')
                     {
                         dir = Direction.East;
-                        return (dir, coord);
+                        return new TraversalPosition(coord, dir);
                     }
                     if (line[j] == '<')
                     {
                         dir = Direction.West;
-                        return (dir, coord);
+                        return new TraversalPosition(coord, dir);
                     }
 
                 }
             }
 
-            return (Direction.East, null);
+            return null;
+        }
+
+        public char PeekNext(TraversalPosition pos, int increment = 1)
+        {
+            Coordinate newCoord = pos.Coord.MoveCopy(pos.Dir, increment);
+
+            if (IsOutside(newCoord))
+            {
+                return (char)0;
+            }
+            else
+            {
+                return Get(newCoord);
+            }
 
         }
 
@@ -471,5 +517,69 @@ namespace AOCShared
 
             Grid = rotatedLines;
         }
+
+        public void PrintToClipboard()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            for (int i = 0; i < GridHeight; i++)
+            {
+                for (int j = 0; j < GridWidth; j++)
+                {
+                    builder.Append(Get(j, i));
+                }
+
+                builder.AppendLine();
+            }
+
+            System.Windows.Forms.Clipboard.SetText(builder.ToString());
+        }
+
+        public Dictionary<char, List<Coordinate>> GetCoordinatesOfDuplicateValues()
+        {
+            Dictionary<char, List<Coordinate>> pairLists = new Dictionary<char, List<Coordinate>>();
+
+            for (int i = 0; i < GridWidth; i++)
+            {
+                for (int j = 0; j < GridHeight; j++)
+                {
+                    char val = Get(i, j);
+
+                    if (val != '.')
+                    {
+                        if (!pairLists.ContainsKey(val))
+                        {
+                            pairLists.Add(val, new List<Coordinate>());
+                        }
+
+                        pairLists[val].Add(new Coordinate(i, j));
+                    }
+
+                }
+            }
+
+            return pairLists;
+        }
+
+        public long CountValue(char valueToCount)
+        {
+            long total = 0;
+            for (int i = 0; i < GridWidth; i++)
+            {
+                for (int j = 0; j < GridHeight; j++)
+                {
+                    char val = Get(i, j);
+
+                    if (val == valueToCount)
+                    {
+                        total++;
+                    }
+
+                }
+            }
+
+            return total;
+        }
+
     }
 }

@@ -22,31 +22,30 @@ namespace AOC2024
         {
             long total = 1;
 
-            (Direction dir, Coordinate coord) = m_grid.FindStart();
+            TraversalPosition pos = m_grid.FindStart();
 
             bool finished = false;
             while (!finished)
             {
-                Coordinate newCoord = coord.MoveCopy(dir, 1);
+                char nextVal = m_grid.PeekNext(pos);
 
-                if (m_grid.IsOutside(newCoord))
+                if (nextVal == (char)0)
                 {
                     break;
                 }
-                else if (m_grid.Get(newCoord).Equals('#'))
+                else if (nextVal.Equals('#'))
                 {
-                    dir = DirectionExtensions.TurnRight(dir);
+                    pos.Dir = DirectionExtensions.TurnRight(pos.Dir);
                 }
                 else
                 {
-                    if (m_grid.Get(newCoord).Equals('.'))
+                    if (nextVal.Equals('.'))
                     {
                         total++;
                     }
 
-                    m_grid.Set(newCoord, 'X');
-                    coord = newCoord;
-
+                    pos.MoveNext();
+                    m_grid.Set(pos.Coord, 'X');
                 }
             }
 
@@ -59,28 +58,27 @@ namespace AOC2024
 
             AOCGrid tempGrid = new AOCGrid(m_grid);
 
-            (Direction dir, Coordinate coord) = tempGrid.FindStart();
+            TraversalPosition pos = tempGrid.FindStart();
 
             bool finished = false;
             while (!finished)
             {
-                Coordinate newCoord = coord.MoveCopy(dir, 1);
+                char nextVal = m_grid.PeekNext(pos);
 
-                if (tempGrid.IsOutside(newCoord))
+                if (nextVal == (char)0)
                 {
                     break;
                 }
-                else if (tempGrid.Get(newCoord).Equals('#'))
+                else if (nextVal.Equals('#'))
                 {
-                    dir = DirectionExtensions.TurnRight(dir);
+                    pos.Dir = DirectionExtensions.TurnRight(pos.Dir);
                 }
                 else
                 {
-                    returnList.Add(new TraversalPosition(newCoord, dir));
+                    returnList.Add(new TraversalPosition(pos));
 
-                    tempGrid.Set(newCoord, 'X');
-                    coord = newCoord;
-
+                    pos.MoveNext();
+                    tempGrid.Set(pos.Coord, 'X');
                 }
             }
 
@@ -94,18 +92,30 @@ namespace AOC2024
             long total = 0;
             List<Coordinate> extraObstacles = new List<Coordinate>();
 
-            (Direction startDir, Coordinate startCoord) = m_grid.FindStart();
+            TraversalPosition startPos = m_grid.FindStart();
+            Coordinate startCoord = startPos.Coord;
+            Direction startDir = startPos.Dir;
+            Coordinate firstCoord = startCoord.MoveCopy(startDir, 1);
 
             var fullPath = GetPath();
-            fullPath.RemoveAt(0);
 
+            List<Coordinate> stopCoords = new List<Coordinate>();
+
+            int count = 0;
             foreach (var path in fullPath)
             {
+                count++;
                 AOCGrid tempGrid = new AOCGrid(m_grid);
                 Coordinate coord = new Coordinate(startCoord);
                 Direction dir = startDir;
 
                 Coordinate testCoord = path.Coord.MoveCopy(path.Dir, 1);
+
+                if (testCoord.Equals(firstCoord))
+                {
+                    continue;
+                }
+
                 if (tempGrid.IsOutside(testCoord))
                 {
                     continue;
@@ -129,6 +139,7 @@ namespace AOC2024
 
                     if (tempGrid.IsOutside(newCoord))
                     {
+                        finished = true;
                         break;
                     }
                     else if (tempGrid.Get(newCoord).Equals('#'))
@@ -139,7 +150,6 @@ namespace AOC2024
                     {
                         if (traverseList.Contains(new TraversalPosition(newCoord, dir)))
                         {
-                            total++;
                             break;
                         }
 
@@ -148,6 +158,16 @@ namespace AOC2024
                         traverseList.Add(new TraversalPosition(coord, dir));
                     }
                 }
+
+                if (!finished)
+                {
+                    if (!stopCoords.Contains(testCoord))
+                    {
+                        stopCoords.Add(new Coordinate(testCoord));
+                        total++;
+                    }
+                }
+
 
             }
 
