@@ -218,6 +218,11 @@ namespace AOCShared
 
             return false;
         }
+
+        public override string ToString()
+        {
+            return "(" + X + "," + Y + ")";
+        }
     }
 
     public class TraversalPosition : IEquatable<TraversalPosition>
@@ -414,6 +419,26 @@ namespace AOCShared
             return null;
         }
 
+        public List<Coordinate> FindAll(char val)
+        {
+            List<Coordinate> coords = new List<Coordinate>();
+            for (int i = 0; i < Grid.Count; i++)
+            {
+                char[] line = Grid[i];
+                for (int j = 0; j < line.Length; j++)
+                {
+                    if (line[j] == val)
+                    {
+                        Coordinate coord = new Coordinate(j, i);
+                        coords.Add(coord);
+                    }
+                }
+            }
+
+            return coords;
+        }
+
+
         public char PeekNext(TraversalPosition pos, int increment = 1)
         {
             Coordinate newCoord = pos.Coord.MoveCopy(pos.Dir, increment);
@@ -465,6 +490,11 @@ namespace AOCShared
         public char Get(Coordinate coord)
         {
             return Grid[(int)coord.Y][coord.X];
+        }
+
+        public int GetInt(Coordinate coord)
+        {
+            return Grid[(int)coord.Y][coord.X] - '0';
         }
 
         public char Get(int x, int y)
@@ -532,7 +562,7 @@ namespace AOCShared
                 builder.AppendLine();
             }
 
-            System.Windows.Forms.Clipboard.SetText(builder.ToString());
+            //System.Windows.Forms.Clipboard.SetText(builder.ToString());
         }
 
         public Dictionary<char, List<Coordinate>> GetCoordinatesOfDuplicateValues()

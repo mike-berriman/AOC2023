@@ -14,4 +14,8 @@
     <None Remove="Boilerplate\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AOCShared\AOCShared.csproj" />
+  </ItemGroup>
+
 </Project>
