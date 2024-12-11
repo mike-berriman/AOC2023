@@ -100,7 +100,7 @@ namespace AOCShared
                 {
                     visited.Add(neighbour);
 
-                    long neighbourLength = IntFindLongestPath(neighbour, end);
+                    long neighbourLength = IntFindShortestPath(neighbour, end);
                     length = Math.Min(length, neighbourLength);
 
                     visited.Remove(neighbour);
@@ -128,7 +128,6 @@ namespace AOCShared
         {
             UndirectedGraph graph = new UndirectedGraph();
 
-            Coordinate lastCoord = null;
             for (int x = 0; x < grid.GridWidth; x++)
             {
                 for (int y = 0; y < grid.GridHeight; y++)
@@ -149,14 +148,12 @@ namespace AOCShared
 
                         if (!grid.MoveNext(newNode, dir))
                         {
-                            if ((newNode != lastCoord) && (grid.Get(newNode) != '#'))
+                            if (grid.Get(newNode) != '#')
                             {
                                 graph.AddNode(coordNode, new GraphNode(newNode));
                             }
                         }
                     }
-
-                    lastCoord = coord;
                 }
             }
 

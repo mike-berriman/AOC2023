@@ -38,7 +38,6 @@ namespace AOC2024
         {
             List<Coordinate> roots = grid.FindAll('0');
 
-            //Coordinate root = new Coordinate(5, 5);
             foreach (Coordinate root in roots)
             {
                 Day10Graph graph = new Day10Graph();
@@ -49,19 +48,19 @@ namespace AOC2024
             }
         }
 
-        public long RecursiveCount(AOCGrid grid, GraphNode g, int recursionCount, string path)
+        public long RecursiveCount(AOCGrid grid, GraphNode g)
         {
             long total = 0;
             if (this.ContainsKey(g))
             {
                 foreach (var node in this[g])
                 {
-                    total += RecursiveCount(grid, node, recursionCount+1, path + "," + node.Coord.ToString());
+                    total += RecursiveCount(grid, node);
                 }
             }
             else
             {
-                if ((grid.GetInt(g.Coord) == 9) || recursionCount == 9)
+                if (grid.GetInt(g.Coord) == 9)
                 {
                     total += 1;
                     heads.Add(g.Coord);
@@ -75,7 +74,7 @@ namespace AOC2024
         {
             long total = 0;
 
-            total = RecursiveCount(grid, new GraphNode(Root), 0, Root.ToString());
+            total = RecursiveCount(grid, new GraphNode(Root));
 
             if (part1)
             {

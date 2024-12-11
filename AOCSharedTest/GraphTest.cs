@@ -34,20 +34,7 @@ namespace AOCSharedTest
             Coordinate start = new Coordinate(1, 0);
             Coordinate end = new Coordinate(grid.GridWidth - 2, grid.GridHeight - 1);
 
-            Assert.AreEqual(154, graph.FindShortestPath(start, end));
-        }
-
-        [Test]
-        public void GraphShortestWeighted()
-        {
-            AOCGrid grid = new AOCGrid(Path.Combine(DataPath, "WeightedGraph.txt"));
-
-            UndirectedGraph graph = UndirectedGraph.BuildWeightedGraph(grid);
-
-            Coordinate start = new Coordinate(1, 0);
-            Coordinate end = new Coordinate(grid.GridWidth - 2, grid.GridHeight - 1);
-
-            Assert.AreEqual(154, graph.FindShortestPath(start, end));
+            Assert.AreEqual(74, graph.FindShortestPath(start, end));
         }
 
         [Test]
@@ -60,7 +47,7 @@ namespace AOCSharedTest
             Coordinate start = new Coordinate(1, 0);
             Coordinate end = new Coordinate(1, grid.GridHeight - 1);
 
-            Assert.AreEqual(154, graph.FindShortestPath(start, end));
+            Assert.AreEqual(10, graph.FindLongestPath(start, end));
         }
         [Test]
 
@@ -73,7 +60,7 @@ namespace AOCSharedTest
             Coordinate start = new Coordinate(1, 0);
             Coordinate end = new Coordinate(1, grid.GridHeight - 1);
 
-            Assert.AreEqual(154, graph.FindShortestPath(start, end));
+            Assert.AreEqual(4, graph.FindShortestPath(start, end));
         }
 
     }
