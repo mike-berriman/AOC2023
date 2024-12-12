@@ -3,8 +3,8 @@
 
     internal class Program
     {
-        const string fileName = @"D:\temp\advent\AOC2024\Day12\TestData1.txt";
-        const string fileName2 = @"D:\temp\advent\AOC2024\Day12\InputData.txt";
+        const string fileName = @"D:\temp\advent\AOC2023\AOC2024\Day12\TestData1.txt";
+        const string fileName2 = @"D:\temp\advent\AOC2023\AOC2024\Day12\InputData.txt";
 
         List<Day12> inputObjects = new List<Day12>();
         Day12 mainObject = null;
@@ -16,10 +16,10 @@
             Program p = new Program();
 
             p.singleObject = true;
-            p.Execute(fileName, false, 1);
+            //p.Execute(fileName, false, 1);
             //p.Execute(fileName2, false, 1);
             //p.Execute(fileName, true, 1);
-            //p.Execute(fileName2, true, 1);
+            p.Execute(fileName2, true, 1);
             
             Console.ReadKey();
         }

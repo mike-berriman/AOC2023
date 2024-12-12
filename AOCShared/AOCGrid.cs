@@ -608,7 +608,26 @@ namespace AOCShared
                 builder.AppendLine();
             }
 
-            //System.Windows.Forms.Clipboard.SetText(builder.ToString());
+            System.Windows.Forms.Clipboard.SetText(builder.ToString());
+        }
+
+        public void WriteFile(string fileName)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            for (int i = 0; i < GridHeight; i++)
+            {
+                for (int j = 0; j < GridWidth; j++)
+                {
+                    builder.Append(Get(j, i));
+                }
+
+                builder.AppendLine();
+            }
+
+            StreamWriter writer = new StreamWriter(fileName);
+            writer.WriteLine(builder.ToString());
+            writer.Close();
         }
 
         public Dictionary<char, List<Coordinate>> GetCoordinatesOfDuplicateValues()

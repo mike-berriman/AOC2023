@@ -6,6 +6,100 @@ using System.Threading.Tasks;
 
 namespace AOCShared
 {
+    public class BoundingBox3
+    {
+        public Coordinate3 Min = new Coordinate3();
+        public Coordinate3 Max = new Coordinate3();
+
+        public bool isInside(Coordinate3 coordinate)
+        {
+            if ((coordinate.X >= Min.X) && (coordinate.X <= Max.X) &&
+                    (coordinate.Y >= Min.Y) && (coordinate.Y <= Max.Y) &&
+                    (coordinate.Z >= Min.Z) && (coordinate.Z <= Max.Z))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Create(List<Coordinate3> coords)
+        {
+            foreach (Coordinate3 coordinate in coords)
+            {
+                if (coordinate.X < Min.X)
+                {
+                    Min.X = coordinate.X;
+                }
+                if (coordinate.Y < Min.Y)
+                {
+                    Min.Y = coordinate.Y;
+                }
+                if (coordinate.Z < Min.Z)
+                {
+                    Min.Z = coordinate.Z;
+                }
+
+                if (coordinate.X > Max.X)
+                {
+                    Max.X = coordinate.X;
+                }
+                if (coordinate.Y > Max.Y)
+                {
+                    Max.Y = coordinate.Y;
+                }
+                if (coordinate.Z > Max.Z)
+                {
+                    Max.Z = coordinate.Z;
+                }
+            }
+        }
+    }
+
+    public class BoundingBox
+    {
+        public Coordinate Min = new Coordinate();
+        public Coordinate Max = new Coordinate();
+
+        public bool isInside(Coordinate3 coordinate)
+        {
+            if ((coordinate.X >= Min.X) && (coordinate.X <= Max.X) &&
+                    (coordinate.Y >= Min.Y) && (coordinate.Y <= Max.Y))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Create(List<Coordinate> coords)
+        {
+            Min = new Coordinate(long.MaxValue, long.MaxValue);
+            Max = new Coordinate(long.MinValue, long.MinValue);
+            foreach (Coordinate coordinate in coords)
+            {
+                if (coordinate.X < Min.X)
+                {
+                    Min.X = coordinate.X;
+                }
+                if (coordinate.Y < Min.Y)
+                {
+                    Min.Y = coordinate.Y;
+                }
+
+                if (coordinate.X > Max.X)
+                {
+                    Max.X = coordinate.X;
+                }
+                if (coordinate.Y > Max.Y)
+                {
+                    Max.Y = coordinate.Y;
+                }
+            }
+        }
+    }
+
+
     public class Coordinate3
     {
         public long X;
@@ -179,9 +273,10 @@ namespace AOCShared
             num7 += (coords[coords.Count - 1].Y - num5) * (coords[0].X - num4);
             long total = (long)((num7 - num6) / 2.0);
 
+            total = Math.Abs(total);
             if (includePerimeter)
             {
-                total += (PolylineSquarePerimeter(coords) / 2) + 1;
+                total += Math.Abs((PolylineSquarePerimeter(coords) / 2) + 1);
             }
 
             return total;

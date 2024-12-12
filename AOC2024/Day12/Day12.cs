@@ -14,6 +14,8 @@ namespace AOC2024
         public List<Direction> Perimiters { get; set; } = new List<Direction>();
         public long Segments { get; set; } = 0;
         public char Value { get; set; } = ' ';
+
+        public List<Coordinate> outerPerimeter { get; set; } = new List<Coordinate>();
     }
 
     internal class Day12
@@ -158,9 +160,12 @@ namespace AOC2024
             TraversalPosition nextPos = MoveAroundPerimiter(grid, lastPos, val);
             TraversalPosition firstPos = startPos;
 
+            result.outerPerimeter.Add(startPos.Coord);
+
             bool first = true;
             while (!firstPos.Equals(nextPos))
             {
+                result.outerPerimeter.Add(nextPos.Coord);
                 if (first)
                 {
                     firstPos = new TraversalPosition(nextPos);
@@ -184,25 +189,7 @@ namespace AOC2024
                 nextPos = MoveAroundPerimiter(grid, lastPos, val);
             }
 
-            //if (DirectionExtensions.IsOppositeDirection(lastPos.Dir, nextPos.Dir))
-            //{
-            //    result.Segments += 1;
-            //}
-
             nextPos.ToString();
-            //if (lastPos.Dir == DirectionExtensions.TurnLeft(nextPos.Dir))
-            //{
-            //    result.Segments += 1;
-            //}
-            //else if (DirectionExtensions.IsOppositeDirection(lastPos.Dir, nextPos.Dir))
-            //{
-            //    result.Segments += 2;
-            //}
-            //else if (lastPos.Dir == DirectionExtensions.TurnRight(nextPos.Dir))
-            //{
-            //    result.Segments += 1;
-            //}
-
         }
 
         public void RemoveDuplicatePerimiters(UndirectedGraph graph, Result res, GraphNode startCoord)
@@ -221,6 +208,86 @@ namespace AOC2024
             }
         }
 
+        public int internalCount = 0;
+        public void GetSegments(AOCGrid newgrid, char val, List<Result> results, int recurseCount)
+        {
+            UndirectedGraph graph = UndirectedGraph.BuildSimplePathGraph(newgrid, '.');
+            while (graph.Count > 0)
+            {
+                Result res = new Result();
+                res.Value = val;
+
+                var start = graph.First();
+                FindAllContiguous(res, graph, start.Key);
+
+                WalkPerimeter(newgrid, graph, res, val);
+                //RemoveDuplicatePerimiters(graph, res, start.Key);
+
+                if (res.Coords.Count > 1)
+                {
+                    long area = MathLibraries.PolylineArea(res.outerPerimeter, true);
+                    if (area > res.Coords.Count)
+                    {
+                        internalCount++;
+                        BoundingBox b = new BoundingBox();
+                        b.Create(res.Coords.Select(x => x.Coord).ToList());
+
+                        AOCGrid innerGrid = new AOCGrid(newgrid);
+                        innerGrid.Clear();
+
+                        for (long i = b.Min.X; i <= b.Max.X; i++)
+                        {
+                            bool inside = false;
+                            for (long j = b.Min.Y; j <= b.Max.Y; j++)
+                            {
+                                GraphNode testNode = new GraphNode(new Coordinate(i, j));
+                                if (res.Coords.Contains(testNode))
+                                {
+                                    inside = !inside;
+                                    innerGrid.Set(new Coordinate(i, j), val);
+                                }
+                                else
+                                {
+                                    if (inside)
+                                    {
+                                        //innerGrid.Set(new Coordinate(i, j), '!');
+                                    }
+                                }
+                            }
+                        }
+
+                        innerGrid.WriteFile(@"d:\temp\grids\" + internalCount + ".txt");
+
+                        //List<Result> innerResults = new List<Result>();
+                        //GetSegments(innerGrid, '!', innerResults, recurseCount + 1);
+
+                        //foreach (var innerres in innerResults)
+                        //{
+                        //    if ((recurseCount % 2) == 1)
+                        //    {
+                        //        res.Segments += innerres.Segments;
+                        //    }
+                        //    else
+                        //    {
+                        //        res.Segments -= innerres.Segments;
+                        //    }
+                        //}
+                    }
+                }
+
+
+                foreach (var result in res.Coords)
+                {
+                    newgrid.Set(result.Coord, '.');
+                }
+
+                graph = UndirectedGraph.BuildSimplePathGraph(newgrid, '.');
+
+                results.Add(res);
+            }
+
+        }
+
         public long Calculate2()
         {
             long total = 0;
@@ -233,27 +300,7 @@ namespace AOC2024
                 AOCGrid newgrid = new AOCGrid(inputGrid);
                 newgrid.ClearExcept(val.Key);
 
-
-                UndirectedGraph graph = UndirectedGraph.BuildSimplePathGraph(newgrid, '.');
-                while (graph.Count > 0)
-                {
-                    Result res = new Result();
-                    res.Value = val.Key;
-
-                    var start = graph.First();
-                    FindAllContiguous(res, graph, start.Key);
-
-                    RemoveDuplicatePerimiters(graph, res, start.Key);
-
-                    foreach (var result in res.Coords)
-                    {
-                        newgrid.Set(result.Coord, '.');
-                    }
-
-                    graph = UndirectedGraph.BuildSimplePathGraph(newgrid, '.');
-
-                    results.Add(res);
-                }
+                GetSegments(newgrid, val.Key, results, 1);
             }
 
             foreach (var result in results)
