@@ -141,6 +141,7 @@ namespace AOCShared
                         continue;
                     }
 
+                    graph[coordNode] = new HashSet<GraphNode>();
                     for (int i = 0; i < 4; i++)
                     {
                         Coordinate newNode = new Coordinate(coord);
@@ -148,7 +149,7 @@ namespace AOCShared
 
                         if (!grid.MoveNext(newNode, dir))
                         {
-                            if (grid.Get(newNode) != '#')
+                            if (grid.Get(newNode) != wallDelimiter)
                             {
                                 graph.AddNode(coordNode, new GraphNode(newNode));
                             }

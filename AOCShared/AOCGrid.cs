@@ -53,6 +53,23 @@ namespace AOCShared
             return dir;
         }
 
+        public static Direction Reverse(Direction dir)
+        {
+            switch (dir)
+            {
+                case Direction.East:
+                    return Direction.West;
+                case Direction.West:
+                    return Direction.East;
+                case Direction.North:
+                    return Direction.South;
+                case Direction.South:
+                    return Direction.North;
+            }
+
+            return dir;
+        }
+
         public static char ToChar(Direction dir)
         {
             switch (dir)
@@ -321,6 +338,20 @@ namespace AOCShared
             }
         }
 
+        public void ClearExcept(char except, char clearVal = '.')
+        {
+            for (int i = 0; i < GridWidth; i++)
+            {
+                for (int j = 0; j < GridHeight; j++)
+                {
+                    if (Get(i, j) != except)
+                    {
+                        Set(new Coordinate(i, j), clearVal);
+                    }
+                }
+            }
+        }
+
         public void ConvertToIntegers()
         {
             foreach (char[] val in Grid)
@@ -438,6 +469,21 @@ namespace AOCShared
             return coords;
         }
 
+        public char PeekNext(Coordinate pos, Direction dir, int increment = 1)
+        {
+            Coordinate newCoord = pos.MoveCopy(dir, increment);
+
+            if (IsOutside(newCoord))
+            {
+                return (char)0;
+            }
+            else
+            {
+                return Get(newCoord);
+            }
+
+        }
+
 
         public char PeekNext(TraversalPosition pos, int increment = 1)
         {
@@ -499,7 +545,7 @@ namespace AOCShared
 
         public char Get(int x, int y)
         {
-            return Grid[x][y];
+            return Grid[y][x];
         }
 
         public string GetRow(int row)
