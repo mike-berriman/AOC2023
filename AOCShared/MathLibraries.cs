@@ -281,5 +281,83 @@ namespace AOCShared
 
             return total;
         }
+
+        private static int TestCorner(bool val1, bool val2, bool val3)
+        {
+            if (val1 && !val2 && !val3)
+            {
+                return 0;
+            }
+
+            if (val3 && !val2 && !val1)
+            {
+                return 0;
+            }
+
+            if (val1 && val2 && val3)
+            {
+                return 0;
+            }
+
+            if (val1 && val2 && !val3)
+            {
+                return 0;
+            }
+
+            if (!val1 && val2 && val3)
+            {
+                return 0;
+            }
+
+            return 1;
+        }
+
+        private static long TestCorners(List<Coordinate> coords, Coordinate coord)
+        {
+            long total = 0;
+
+            //First - topLeft
+            bool val1 = coords.Contains(coord.Offset(-1, 0));
+            bool val2 = coords.Contains(coord.Offset(-1, -1));
+            bool val3 = coords.Contains(coord.Offset(0, -1));
+
+            total += TestCorner(val1, val2, val3);
+
+            //First - topRight
+            val1 = coords.Contains(coord.Offset(0, -1));
+            val2 = coords.Contains(coord.Offset(1, -1));
+            val3 = coords.Contains(coord.Offset(1, 0));
+
+            total += TestCorner(val1, val2, val3);
+
+            //First - bottomLeft
+            val1 = coords.Contains(coord.Offset(0, 1));
+            val2 = coords.Contains(coord.Offset(-1, 1));
+            val3 = coords.Contains(coord.Offset(-1, 0));
+
+            total += TestCorner(val1, val2, val3);
+
+            //First - bottomRight
+            val1 = coords.Contains(coord.Offset(1, 0));
+            val2 = coords.Contains(coord.Offset(1, 1));
+            val3 = coords.Contains(coord.Offset(0, 1));
+
+            total += TestCorner(val1, val2, val3);
+
+            return total;
+        }
+
+        public static long CountPolylineCorners(List<Coordinate> coords)
+        {
+            long total = 0;
+
+            foreach (var coord in coords)
+            {
+                total += TestCorners(coords, coord);
+            }
+
+            return total;
+        }
+
     }
 }

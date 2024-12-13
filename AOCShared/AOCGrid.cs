@@ -196,7 +196,7 @@ namespace AOCShared
             return c;
         }
 
-        public Coordinate Move(Direction CurrentDirection, long distance)
+        public void Move(Direction CurrentDirection, long distance)
         {
             switch (CurrentDirection)
             {
@@ -213,8 +213,16 @@ namespace AOCShared
                     Y += distance;
                     break;
             }
+        }
 
-            return this;
+        public Coordinate Offset(long incX, long incY)
+        {
+            Coordinate coord = new Coordinate(this);
+
+            coord.X += incX;
+            coord.Y += incY;
+
+            return coord;
         }
 
         public override int GetHashCode()
@@ -272,7 +280,7 @@ namespace AOCShared
 
         public void MoveNext(int distance = 1)
         {
-            Coord = Coord.Move(Dir, distance);
+            Coord.Move(Dir, distance);
         }
 
         public override int GetHashCode()
@@ -519,32 +527,46 @@ namespace AOCShared
 
             CurrentCoordinate.Move(CurrentDirection, distance);
 
-            if (((CurrentCoordinate.X < 0) || (CurrentCoordinate.X >= GridWidth)) ||
-                ((CurrentCoordinate.Y < 0) || (CurrentCoordinate.Y >= GridHeight)))
-            {
-                finished = true;
-            }
+            finished = IsOutside(CurrentCoordinate);
 
             return finished;
         }
 
         public void Set(Coordinate coord, char value)
         {
-            Grid[(int)coord.Y][coord.X] = value;
+            if (!IsOutside(coord))
+            {
+                Grid[(int)coord.Y][coord.X] = value;
+            }
         }
 
-        public char Get(Coordinate coord)
+        public char Get(Coordinate coord, char defaultVal = '.')
         {
+            if (IsOutside(coord))
+            {
+                return defaultVal;
+            }
+
             return Grid[(int)coord.Y][coord.X];
         }
 
         public int GetInt(Coordinate coord)
         {
-            return Grid[(int)coord.Y][coord.X] - '0';
+            if (!IsOutside(coord))
+            {
+                return Grid[(int)coord.Y][coord.X] - '0';
+            }
+
+            return -1;
         }
 
-        public char Get(int x, int y)
+        public char Get(int x, int y, char defaultVal = '.')
         {
+            if (IsOutside(new Coordinate(y, x)))
+            {
+                return defaultVal;
+            }
+
             return Grid[y][x];
         }
 
