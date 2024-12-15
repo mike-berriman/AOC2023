@@ -320,6 +320,18 @@ namespace AOCShared
             Init(allData);
         }
 
+        public AOCGrid(long width, long height)
+        {
+            List<char[]> vals = new List<char[]>();
+            for(int i = 0; i < height; i++)
+            {
+                char[] line = new char[width];
+                vals.Add(line);
+            }
+
+            Init(vals);
+        }
+
         public AOCGrid(List<string> allData)
         {
             Init(allData);
@@ -562,7 +574,7 @@ namespace AOCShared
 
         public char Get(int x, int y, char defaultVal = '.')
         {
-            if (IsOutside(new Coordinate(y, x)))
+            if (IsOutside(new Coordinate(x, y)))
             {
                 return defaultVal;
             }
@@ -633,7 +645,8 @@ namespace AOCShared
             System.Windows.Forms.Clipboard.SetText(builder.ToString());
         }
 
-        public void WriteFile(string fileName)
+
+        public void WriteFile(StreamWriter writer)
         {
             StringBuilder builder = new StringBuilder();
 
@@ -647,8 +660,13 @@ namespace AOCShared
                 builder.AppendLine();
             }
 
-            StreamWriter writer = new StreamWriter(fileName);
             writer.WriteLine(builder.ToString());
+        }
+
+        public void WriteFile(string fileName)
+        {
+            StreamWriter writer = new StreamWriter(fileName);
+            WriteFile(writer);
             writer.Close();
         }
 
