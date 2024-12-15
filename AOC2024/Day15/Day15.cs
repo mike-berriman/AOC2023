@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace AOC2024
 {
-    internal class Day13
+    internal class Day15
     {
         private bool m_part2 = false;
 
-        public Day13(bool part2)
+        public Day15(bool part2)
         {
             m_part2 = part2;
         }
