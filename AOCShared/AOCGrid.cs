@@ -88,6 +88,24 @@ namespace AOCShared
 
         }
 
+        public static Direction FromChar(char dir)
+        {
+            switch (dir)
+            {
+                case '>':
+                    return Direction.East;
+                case '<':
+                    return Direction.West;
+                case '^':
+                    return Direction.North;
+                case 'v':
+                    return Direction.South;
+            }
+
+            return Direction.Unknown;
+
+        }
+
         public static bool IsOppositeDirection(Direction dir1, Direction dir2)
         {
             bool reverse = false;
@@ -174,7 +192,7 @@ namespace AOCShared
             return Direction.West;
         }
 
-        public Coordinate MoveCopy(Direction CurrentDirection, long distance)
+        public Coordinate MoveCopy(Direction CurrentDirection, long distance = 1)
         {
             Coordinate c = new Coordinate(this);
             switch (CurrentDirection)
@@ -196,7 +214,7 @@ namespace AOCShared
             return c;
         }
 
-        public void Move(Direction CurrentDirection, long distance)
+        public void Move(Direction CurrentDirection, long distance = 1)
         {
             switch (CurrentDirection)
             {
@@ -643,6 +661,27 @@ namespace AOCShared
             }
 
             System.Windows.Forms.Clipboard.SetText(builder.ToString());
+        }
+
+        public void PrintToConsole(string title)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            Console.SetCursorPosition(0, 0);
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                Console.WriteLine(title);
+                Console.WriteLine();
+            }
+
+            for (int i = 0; i < GridHeight; i++)
+            {
+                string val = GetRow(i);
+                Console.WriteLine(val);
+            }
+
+            Console.ReadKey();
         }
 
 
