@@ -14,16 +14,9 @@ namespace AOCSharedTest
         [Test]
         public void ShortestWeightedPath()
         {
-            DjikstraAlgorithm<DjikstraNode> alg = new DjikstraAlgorithm<DjikstraNode>(Path.Combine(DataPath, "DjikstraBasic.txt"));
+            DjikstraAlgorithm<DjikstraNode> alg = new DjikstraAlgorithm<DjikstraNode>(Path.Combine(DataPath, "DjikstraBasic.txt"), true);
 
-            DjikstraNode rootNode = new DjikstraNode()
-            {
-                Coord = new Coordinate() { X = 0, Y = 0 },
-                Distance = 0,
-                Direction = Direction.Unknown,
-            };
-
-            long total = alg.Calculate(rootNode);
+            long total = alg.Calculate();
 
             Assert.AreEqual(78, total);
         }
@@ -33,17 +26,62 @@ namespace AOCSharedTest
         {
             Day17Algorithm alg = new Day17Algorithm(Path.Combine(DataPath, "DjikstraBasic.txt"));
 
-            Day17Node rootNode = new Day17Node()
-            {
-                Coord = new Coordinate() { X = 0, Y = 0 },
-                Distance = 0,
-                Direction = Direction.Unknown,
-                StepsInDirection = 0
-            };
-
-            long total = alg.Calculate(rootNode);
+            long total = alg.Calculate();
 
             Assert.AreEqual(102, total);
+        }
+
+        [Test]
+        public void PathFinder()
+        {
+            DjikstraAlgorithm<DjikstraNode> alg = new DjikstraAlgorithm<DjikstraNode>(Path.Combine(DataPath, "GraphLongestUnweighted.txt"), false);
+
+            long total = alg.CalculateFromCoords(new Coordinate(1,0), new Coordinate(alg.m_Grid.GridWidth-2, alg.m_Grid.GridHeight-1));
+
+            Assert.AreEqual(74, total);
+        }
+
+        [Test]
+        public void LargePathFinder()
+        {
+            DjikstraAlgorithm<DjikstraNode> alg = new DjikstraAlgorithm<DjikstraNode>(Path.Combine(DataPath, "LargerGridTest.txt"), false);
+
+            long total = alg.CalculateFromCoords();
+
+            Assert.AreEqual(272, total);
+        }
+
+        [Test]
+        public void LargePathFinder2()
+        {
+            DjikstraAlgorithm<DjikstraNode> alg = new DjikstraAlgorithm<DjikstraNode>(Path.Combine(DataPath, "StartEndTest.txt"), false);
+
+            long total = alg.Calculate();
+
+            Assert.AreEqual(576, total);
+        }
+
+        [Test]
+        public void StartEndTest()
+        {
+            DjikstraAlgorithm<DjikstraNode> alg = new DjikstraAlgorithm<DjikstraNode>(Path.Combine(DataPath, "StartEndTest.txt"), false);
+
+            Coordinate start = alg.m_Grid.FindAll('S').First();
+            Coordinate end = alg.m_Grid.FindAll('E').First();
+
+            long total = alg.CalculateFromCoords(start, end);
+
+            Assert.AreEqual(572, total);
+        }
+
+        [Test]
+        public void UnsolveableTest()
+        {
+            DjikstraAlgorithm<DjikstraNode> alg = new DjikstraAlgorithm<DjikstraNode>(Path.Combine(DataPath, "UnsolvableTest.txt"), false);
+
+            long total = alg.Calculate();
+
+            Assert.AreEqual(long.MaxValue, total);
         }
 
         public class Day17Node : DjikstraNode
@@ -68,14 +106,14 @@ namespace AOCSharedTest
 
         public class Day17Algorithm : DjikstraAlgorithm<Day17Node>
         {
-            public Day17Algorithm(string fileName) : base(fileName)
+            public Day17Algorithm(string fileName) : base(fileName, true)
             {
 
             }
 
             public override void DoProcessing(Day17Node thisNode, Day17Node newNode)
             {
-                long value = Weights.Get(newNode.Coord);
+                long value = m_Grid.Get(newNode.Coord);
                 newNode.Distance = thisNode.Distance + value;
 
                 if (newNode.Direction == thisNode.Direction)

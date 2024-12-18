@@ -3,11 +3,11 @@
 
     internal class Program
     {
-        const string fileName = @"D:\temp\advent\AOC2023\AOC2024\Day17\TestData1.txt";
-        const string fileName2 = @"D:\temp\advent\AOC2023\AOC2024\Day17\InputData.txt";
+        const string fileName = @"D:\temp\advent\AOC2024\Day19\TestData1.txt";
+        const string fileName2 = @"D:\temp\advent\AOC2024\Day19\InputData.txt";
 
-        List<Day17> inputObjects = new List<Day17>();
-        Day17 mainObject = null;
+        List<Day19> inputObjects = new List<Day19>();
+        Day19 mainObject = null;
         bool singleObject = false;
 
         [STAThread]
@@ -16,10 +16,10 @@
             Program p = new Program();
 
             p.singleObject = true;
-            //p.Execute(fileName, false, 1);
+            p.Execute(fileName, false, 1);
             //p.Execute(fileName2, false, 1);
             //p.Execute(fileName, true, 1);
-            p.Execute(fileName2, true, 1);
+            //p.Execute(fileName2, true, 1);
             
             Console.ReadKey();
         }
@@ -35,7 +35,7 @@
                 if (!string.IsNullOrEmpty(line))
                 {
                     // READER code here
-                    Day17 av = new Day17(part2);
+                    Day19 av = new Day19(part2);
 
                     av.ProcessMultipleInput(line);
                     inputObjects.Add(av);
@@ -82,7 +82,7 @@
 
             if (singleObject)
             {
-                mainObject = new Day17(part2);
+                mainObject = new Day19(part2);
                 mainObject.ProcessSingleInput(fileName);
             }
             else

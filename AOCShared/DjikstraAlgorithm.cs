@@ -45,26 +45,85 @@ namespace AOCShared
 
     public class DjikstraAlgorithm<T> where T : DjikstraNode, new()
     {
-        public AOCGrid Weights = null;
+        public AOCGrid m_Grid = null;
         public Queue<T> NodeQueue = new Queue<T>();
         public Dictionary<T, long> VisitedCache = new Dictionary<T, long>();
 
-        public DjikstraAlgorithm(AOCGrid grid)
+        private bool m_numericWeighted = false;
+        private T m_startPosition { get; set; } = null;
+        private T m_endPosition { get; set; } = null;
+
+        public char WallCharacter { get; set; } = '#';
+
+        public DjikstraAlgorithm(AOCGrid grid, bool numericWeighted)
         {
-            Weights = grid;
+            m_Grid = grid;
+
+            if (numericWeighted)
+            {
+                m_numericWeighted = true;
+                m_Grid.ConvertToIntegers();
+            }
         }
 
-        public DjikstraAlgorithm(string fileName)
+        public DjikstraAlgorithm(string fileName, bool numericWeighted)
         {
-            Weights = new AOCGrid(fileName);
-            Weights.ConvertToIntegers();
+            m_Grid = new AOCGrid(fileName);
+
+            if (numericWeighted)
+            {
+                m_numericWeighted = true;
+                m_Grid.ConvertToIntegers();
+            }
         }
 
-        public virtual long Calculate(T rootNode)
+        public virtual long CalculateFromCoords(Coordinate startPosition = null, Coordinate endPosition = null)
+        {
+            T startNode = null;
+            if (startPosition != null)
+            {
+                startNode = new T();
+                startNode.Coord = startPosition;
+                startNode.Direction = Direction.Unknown;
+                startNode.Distance = 0;
+            }
+
+            T endNode = null;
+            if (endPosition != null)
+            {
+                endNode = new T();
+                endNode.Coord = endPosition;
+                endNode.Direction = Direction.Unknown;
+                endNode.Distance = 0;
+            }
+
+            return Calculate(startNode, endNode);
+        }
+
+        public virtual long Calculate(T startPosition = null, T endPosition = null)
         {
             long total = 0;
 
-            NodeQueue.Enqueue(rootNode);
+            if (startPosition == null)
+            {
+                startPosition = new T();
+                startPosition.Coord = new Coordinate(0, 0);
+                startPosition.Direction = Direction.Unknown;
+                startPosition.Distance = 0;
+            }
+            m_startPosition = startPosition;
+
+
+            if (endPosition == null)
+            {
+                endPosition = new T();
+                endPosition.Coord = new Coordinate(m_Grid.GridWidth - 1, m_Grid.GridHeight - 1);
+                endPosition.Direction = Direction.Unknown;
+            }
+            m_endPosition = endPosition;
+
+
+            NodeQueue.Enqueue(startPosition);
 
             while (NodeQueue.Count > 0)
             {
@@ -88,6 +147,11 @@ namespace AOCShared
                     VisitedCache.Add(thisNode, thisNode.Distance);
                 }
 
+                if (thisNode.Coord.Equals(endPosition.Coord))
+                {
+                    continue;
+                }
+
                 for (int i = 0; i < 4; i++)
                 {
                     T newNode = new T();
@@ -101,9 +165,7 @@ namespace AOCShared
                         continue;
                     }
 
-
-
-                    if (!Weights.MoveNext(newNode.Coord, newNode.Direction))
+                    if (!m_Grid.MoveNext(newNode.Coord, newNode.Direction))
                     {
                         DoProcessing(thisNode, newNode);
                     }
@@ -117,7 +179,12 @@ namespace AOCShared
         {
             if (IsValidNode(currentNode, nextNode))
             {
-                long value = Weights.Get(nextNode.Coord);
+                long value = 1;
+                
+                if (m_numericWeighted)
+                {
+                    value = m_Grid.Get(nextNode.Coord);
+                }
                 nextNode.Distance = currentNode.Distance + value;
 
                 NodeQueue.Enqueue(nextNode);
@@ -126,13 +193,17 @@ namespace AOCShared
 
         public virtual bool IsValidNode(T currentNode, T nextNode)
         {
+            if (m_Grid.Get(nextNode.Coord) == WallCharacter)
+            {
+                return false;
+            }
             return true;
         }
 
         public virtual long GetResult()
         {
             long total = long.MaxValue;
-            foreach (var val in VisitedCache.Keys.Where(x => (x.Coord.X == (Weights.GridWidth - 1)) && (x.Coord.Y == (Weights.GridHeight - 1))))
+            foreach (var val in VisitedCache.Keys.Where(x => x.Coord.Equals(m_endPosition.Coord)))
             {
                 total = Math.Min(VisitedCache[val], total);
             }
