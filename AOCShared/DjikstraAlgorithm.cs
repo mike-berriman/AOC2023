@@ -49,13 +49,18 @@ namespace AOCShared
         public Queue<T> NodeQueue = new Queue<T>();
         public Dictionary<T, long> VisitedCache = new Dictionary<T, long>();
 
+        public DjikstraAlgorithm(AOCGrid grid)
+        {
+            Weights = grid;
+        }
+
         public DjikstraAlgorithm(string fileName)
         {
             Weights = new AOCGrid(fileName);
             Weights.ConvertToIntegers();
         }
 
-        public long Calculate(T rootNode)
+        public virtual long Calculate(T rootNode)
         {
             long total = 0;
 
@@ -95,6 +100,8 @@ namespace AOCShared
                         // Don't look backwards
                         continue;
                     }
+
+
 
                     if (!Weights.MoveNext(newNode.Coord, newNode.Direction))
                     {

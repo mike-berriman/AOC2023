@@ -341,7 +341,7 @@ namespace AOCShared
         public AOCGrid(long width, long height)
         {
             List<char[]> vals = new List<char[]>();
-            for(int i = 0; i < height; i++)
+            for (int i = 0; i < height; i++)
             {
                 char[] line = new char[width];
                 vals.Add(line);
@@ -663,7 +663,7 @@ namespace AOCShared
             System.Windows.Forms.Clipboard.SetText(builder.ToString());
         }
 
-        public void PrintToConsole(string title)
+        public void PrintToConsole(string title, bool waitForKey = true)
         {
             StringBuilder builder = new StringBuilder();
 
@@ -681,9 +681,11 @@ namespace AOCShared
                 Console.WriteLine(val);
             }
 
-            Console.ReadKey();
+            if (waitForKey)
+            {
+                Console.ReadKey();
+            }
         }
-
 
         public void WriteFile(StreamWriter writer)
         {
