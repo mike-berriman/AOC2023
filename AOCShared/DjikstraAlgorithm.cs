@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AOCShared
 {
-    public class DjikstraNode
+    public class DjikstraNode 
     {
         public Coordinate Coord { get; set; } = new Coordinate();
         public long Distance { get; set; } = long.MaxValue;
@@ -40,7 +41,6 @@ namespace AOCShared
         {
             return obj != null && obj.GetHashCode() == this.GetHashCode();
         }
-
     }
 
     public class DjikstraAlgorithm<T> where T : DjikstraNode, new()
@@ -50,8 +50,8 @@ namespace AOCShared
         public Dictionary<T, long> VisitedCache = new Dictionary<T, long>();
 
         private bool m_numericWeighted = false;
-        private T m_startPosition { get; set; } = null;
-        private T m_endPosition { get; set; } = null;
+        protected T m_startPosition { get; set; } = null;
+        protected T m_endPosition { get; set; } = null;
 
         public char WallCharacter { get; set; } = '#';
 
